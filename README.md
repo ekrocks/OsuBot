@@ -1,0 +1,2 @@
+# OsuBot
+Osu Bot Attempt
