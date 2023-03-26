@@ -1,7 +1,12 @@
 const Banchojs = require("bancho.js");
-const USERNAME = process.env.banchoUSERNAME;
-const PASSWORD = process.env.banchoPASSWORD;
+const { id } = require("osu-api-extended/dist/utility/mods");
+
+
+//requiring .env for credentials
 require('dotenv').config();
+
+//connecting to api 
+const api_connect = require('./api-connector');
 
 //command prefix for chat commands
 const command_prefix = "!"
@@ -23,16 +28,19 @@ const startOsuBot = async () => {
         client.on("PM", async({message, user}) => {
             console.log(`received message from ${user.ircUsername}`);
             // check if message was sent by ourselves
-            if(user.ircUsername === USERNAME) return;
+            if(user.ircUsername === process.env.banchoUSERNAME) return;
 
             //check for command prefix
             if(message[0] !== "!") return;
 
             const command = message.split(" ")[0].toLowerCase();
-
+            
+            //creating commands with the prefix ! followed by string
             switch(command) {
                 case command_prefix + "hello":
                     return await user.sendMessage(`Hello there ${user.ircUsername}`);
+                case command_prefix + "r":
+                    return await user.sendMessage(`This feature will soon generate a random beatmap.`);
             }
         });
 
