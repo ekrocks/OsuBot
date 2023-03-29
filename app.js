@@ -6,26 +6,6 @@ const fs = require ("fs/promises")
 
 require('dotenv').config();
 
-// const return_search = () =>{
-//     let beatmap = /https?:\/\/osu.ppy.sh\/b\/(\d{4,10})/i;
-//     client.on("PM", async({message, user}) => {
-//         console.log(`received message from ${user.ircUsername}`);
-//         // check if message was sent by ourselves    
-//         if (beatmap.test(message)){
-            
-//                 //returning beatmap data for later similar beatmap return
-//                 let pp = await api_connect.pp_calculate(message.match(beatmap)[1])
-//                 let search = await api_connect.v2.beatmap.search({tags: pp.data.tags})
-//                 //({genre: pp.data.genre_id.name})
-//                 return await user.sendmessage (search (limit,(3)))
-//                 console.log(user.sendmessage)
-//             //if (async, )
-
-//         }
-//     }
-// }
-
-
 //requiring .env for credentials
 require('dotenv').config();
 
@@ -74,19 +54,39 @@ const main = async() => {
                 if (beatmap.test(message)){
                 
                     //returning beatmap data for later similar beatmap return
+
                     let pp = await api_connect.pp_calculate(message.match(beatmap)[2])
+                    let ppDifficulty = pp.stats.star.pure
                     let search = await api_connect.v2.beatmap.search({genre_id: pp.data.genre_id})
-                    //({genre: pp.data.genre_id.name})
                     
                     //log 
                     console.log(search.beatmapsets[0])
                     console.log(message)
                     
-                    //return beatmap url similar in difficulty to linked map
-                    return await user.sendMessage(search.beatmapsets[0].beatmaps[4].url)
+                    //TODO: instead of picking the first beatmapset, pick out random beatmap from the search.beamapsets array
 
-                    //if search.beatmapsets.... >= pp.data.diff or whatever and search.data <= 6.9
-                        //return search.data...etc url 
+                    let exBeatMap = search.beatmapsets[0]
+                    let possiblebeatMaps = exBeatMap.beatmaps.filter(({difficulty_rating}) => { //beatmap.difficulty_rating -> difficulty_rating 
+                        if(difficulty_rating == ppDifficulty)
+                        {
+                            return true
+                        }
+                        else if (Math.abs(difficulty_rating - ppDifficulty) <= 2.0) //ex. rating 4 will return rating 2~6
+                        {
+                            return true
+                        }
+                        else
+                        {
+                            return false
+                        }
+                    }).map(({url}) => url)
+                    
+                    let totalMaps = possiblebeatMaps.length
+                    let finalMapChosen = Math.floor(Math.random() * totalMaps)
+
+                    //return beatmap url similar in difficulty to linked map
+                    let beatmapURL = await user.sendMessage(possiblebeatMaps[finalMapChosen])
+
                     
                 
                     
