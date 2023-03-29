@@ -10,8 +10,6 @@ const main = async () => {
     
     return {pp_calculate, v2}
     
-    //You hate trans women because theyre trans, I hate trans women because theyre women. 
-    //Trans inclusive radical mysoginy, theres a better way to hate. :)
 };
 
 module.exports = main
