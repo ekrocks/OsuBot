@@ -4,7 +4,7 @@ const { id } = require("osu-api-extended/dist/utility/mods");
 
 const fs = require ("fs/promises")
 
-//require('dotenv').config();
+require('dotenv').config();
 
 // const return_search = () =>{
 //     let beatmap = /https?:\/\/osu.ppy.sh\/b\/(\d{4,10})/i;
@@ -23,7 +23,7 @@ const fs = require ("fs/promises")
 
 //         }
 //     }
-//}
+// }
 
 
 //requiring .env for credentials
@@ -69,15 +69,27 @@ const main = async() => {
                     case command_prefix + "r":
                         return await user.sendMessage(`This feature will soon generate a random beatmap.`);
                 }
-                let beatmap = /https?:\/\/osu.ppy.sh\/b\/(\d{4,10})/i;
+                let beatmap = /https?:\/\/osu.ppy.sh\/beatmapsets\/(\d{4,})#?\/(\d{4,})/i;
+                console.log(message)
                 if (beatmap.test(message)){
                 
                     //returning beatmap data for later similar beatmap return
-                    let pp = await api_connect.pp_calculate(message.match(beatmap)[1])
-                    let search = await api_connect.v2.beatmap.search({tags: pp.data.tags})
+                    let pp = await api_connect.pp_calculate(message.match(beatmap)[2])
+                    let search = await api_connect.v2.beatmap.search({genre_id: pp.data.genre_id})
                     //({genre: pp.data.genre_id.name})
-                    //return await user.sendMessage (search)
-                    console.log(search)
+                    
+                    //log 
+                    console.log(search.beatmapsets[0])
+                    console.log(message)
+                    
+                    //return beatmap url similar in difficulty to linked map
+                    return await user.sendMessage(search.beatmapsets[0].beatmaps[4].url)
+
+                    //if search.beatmapsets.... >= pp.data.diff or whatever and search.data <= 6.9
+                        //return search.data...etc url 
+                    
+                
+                    
                     
                 }     
             });
